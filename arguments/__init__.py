@@ -58,7 +58,7 @@ class ModelParams(ParamGroup):
         self._images = "images"
         self._resolution = -1
         self._white_background = False
-        self.data_device = "cuda"
+        self.data_device = "cpu"
         self.bezier_order = 7
         self.mode = "Linear"  # Linear, Spline, Bezier
         self.eval = False
@@ -77,6 +77,7 @@ class PipelineParams(ParamGroup):
         self.convert_SHs_python = False
         self.compute_cov3D_python = False
         self.debug = False
+        self.antialiasing = False
         super().__init__(parser, "Pipeline Parameters")
 
 
@@ -98,12 +99,12 @@ class OptimizationParams(ParamGroup):
         self.sh_up_degree_interval = 1_000
         self.densify_from_iter = 500
         self.densify_until_iter = 25_000
-        self.densify_grad_threshold = 0.00008
+        self.densify_grad_threshold = 0.0002
         self.random_background = False
         self.depth_weight = 0.001
         self.per_rgb_weight = 0.05
-        self.blur_sample_num = 21
-        self.deblur = False
+        self.blur_sample_num = 2
+        self.deblur = True
         self.depth_reg = False
         self.ground_truth = False
         self.non_uniform = False

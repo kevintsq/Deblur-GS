@@ -68,11 +68,13 @@ def render(viewpoint_camera, pc: GaussianModel, pipe, bg_color: torch.Tensor, sc
         tanfovy=tanfovy,
         bg=bg_color,
         scale_modifier=scaling_modifier,
-        projmatrix=viewpoint_camera.projection_matrix,
+        projmatrix=viewpoint_camera.full_proj_transform,
+        viewmatrix=viewpoint_camera.world_view_transform,
         sh_degree=pc.active_sh_degree,
         campos=camera_center,
         prefiltered=False,
-        debug=pipe.debug
+        debug=pipe.debug,
+        antialiasing=pipe.antialiasing
     )
 
     rasterizer = GaussianRasterizer(raster_settings=raster_settings)
@@ -119,7 +121,7 @@ def render(viewpoint_camera, pc: GaussianModel, pipe, bg_color: torch.Tensor, sc
         colors_precomp = override_color
 
     # Rasterize visible Gaussians to image, obtain their radii (on screen).
-    rendered_image, depth_image, alpha_image, radii = rasterizer(
+    rendered_image, radii, depth_image = rasterizer(
         means3D=means3D,
         means2D=means2D,
         shs=shs,
@@ -127,14 +129,12 @@ def render(viewpoint_camera, pc: GaussianModel, pipe, bg_color: torch.Tensor, sc
         opacities=opacity,
         scales=scales,
         rotations=rotations,
-        cov3D_precomp=cov3D_precomp,
-        viewmatrix=world_view_transform)
+        cov3D_precomp=cov3D_precomp)
 
     # Those Gaussians that were frustum culled or had a radius of 0 were not visible.
     # They will be excluded from value updates used in the splitting criteria.
     return {"render": rendered_image,
             "depth": depth_image,
-            "alpha": alpha_image,
             "viewspace_points": screenspace_points,
             "visibility_filter": radii > 0,
             "radii": radii}

@@ -210,8 +210,8 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             if iteration in testing_iterations:
                 print(f"blur_weight={blur_weight}")
             # Log and save
-            training_report(tb_writer, vis, iteration, image_loss, loss, l1_loss, iter_start.elapsed_time(
-                iter_end), testing_iterations, scene, pipe, background, opt)
+            # training_report(tb_writer, vis, iteration, image_loss, loss, l1_loss, iter_start.elapsed_time(
+            #     iter_end), testing_iterations, scene, pipe, background, opt)
             if (iteration in saving_iterations):
                 print("\n[ITER {}] Saving Gaussians".format(iteration))
                 scene.save(iteration)
@@ -413,9 +413,9 @@ if __name__ == "__main__":
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
     parser.add_argument("--test_iterations", nargs="+",
-                        type=int, default=list(range(1000, 90_000, 1000)))
+                        type=int, default=[90_000])
     parser.add_argument("--save_iterations", nargs="+",
-                        type=int, default=list(range(1000, 90_000, 1000)))
+                        type=int, default=[90_000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations",
                         nargs="+", type=int, default=[])
